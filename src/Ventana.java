@@ -15,6 +15,12 @@ import javax.swing.JPanel;
 public class Ventana extends JFrame {
 
     public JPanel panel;
+    private Deck baraja;
+
+    private JLabel textoInicio;
+    private JButton allInButton;
+    private JButton empezarButton;
+    private JButton salirButton;
 
     public Ventana() {
         this.setTitle("BlackJack");
@@ -22,20 +28,124 @@ public class Ventana extends JFrame {
         this.setSize(1280, 600);
         this.setLocationRelativeTo(null);
         componentes();
+        baraja =  new Deck();
     }
 
     private BufferedImage fondo;
 
-    private void componentes(){
+    private void componentes() {
         paneles();
         cartasVolteadas();
         fichas();
         textos();
+        textoInicio();
+        botonesApuesta();
     }
 
-    private void paneles(){
+    private void botonesApuesta() {
+        // hacer tres botones abajo centrados
+        // para all-in, empezar y salir
+
+        allInButton = new JButton("All-In");
+        empezarButton = new JButton("Empezar");
+        salirButton = new JButton("Salir");
+
+        // Set bounds for the buttons (centered at bottom)
+        allInButton.setBounds(440, 500, 100, 40);
+        empezarButton.setBounds(590, 500, 100, 40);
+        salirButton.setBounds(740, 500, 100, 40);
+
+        // Style the buttons
+        Font buttonFont = new Font("Arial", Font.BOLD, 18);
+        Color buttonColor = new Color(67, 130, 255);
+
+        allInButton.setFont(buttonFont);
+        empezarButton.setFont(buttonFont);
+        salirButton.setFont(buttonFont);
+
+        allInButton.setBackground(buttonColor);
+        empezarButton.setBackground(buttonColor);
+        salirButton.setBackground(buttonColor);
+        allInButton.setForeground(Color.BLACK);
+        empezarButton.setForeground(Color.BLACK);
+        salirButton.setForeground(Color.BLACK);
+
+        allInButton.setBackground(new Color(173, 216, 230)); // Light blue
+        empezarButton.setBackground(new Color(173, 216, 230));
+        salirButton.setBackground(new Color(173, 216, 230));
+
+        allInButton.addActionListener(e -> handleAllIn());
+        empezarButton.addActionListener(e -> handleEmpezar());
+        salirButton.addActionListener(e -> handleSalir());
+
+        // Add buttons to panel
+        panel.add(allInButton);
+        panel.add(empezarButton);
+        panel.add(salirButton);
+    }
+
+    private void handleAllIn() {
+        // Remove welcome text and buttons
+        panel.remove(textoInicio);
+        panel.remove(allInButton);
+        panel.remove(empezarButton);
+        panel.remove(salirButton);
+
+        // Start game with all money
+        // Add your all-in game logic here
+
+        panel.revalidate();
+        panel.repaint();
+    }
+
+    private void handleEmpezar() {
+        // Remove welcome text and buttons
+        panel.remove(textoInicio);
+        panel.remove(allInButton);
+        panel.remove(empezarButton);
+        panel.remove(salirButton);
+        // Create a new card label
+        JLabel cartaNueva = new JLabel();
+        // Get random card and create icon
+        String carta = baraja.getRandomCard();
+        ImageIcon iconoCarta = new ImageIcon(getClass().getResource("/cartas/" + carta));
+        // Scale the card image
+        Image cartaOriginal = iconoCarta.getImage();
+        Image cartaEscalada = cartaOriginal.getScaledInstance(90, 130, Image.SCALE_SMOOTH);
+        ImageIcon iconoEscalado = new ImageIcon(cartaEscalada);
+        // Set the icon and position
+        cartaNueva.setIcon(iconoEscalado);
+        cartaNueva.setBounds(590, 500, 90, 130);
+        panel.add(cartaNueva);
+        // Start normal game
+        // Add your game start logic here
+
+        panel.revalidate();
+        panel.repaint();
+    }
+
+    private void handleSalir() {
+        // Close the application
+        System.exit(0);
+    }
+
+    private void textoInicio() {
+        textoInicio = new JLabel("Bienvenido a BlackJack");
+        Font fuentePersonalizada = new Font("Times New Roman", Font.BOLD, 50);
+        Color fondo = new Color(67, 130, 255, 190);
+
+        textoInicio.setBounds(350, 10, 550, 50);
+        textoInicio.setFont(fuentePersonalizada);
+        textoInicio.setForeground(Color.black);
+        textoInicio.setBackground(fondo);
+        textoInicio.setOpaque(true);
+
+        panel.add(textoInicio);
+    }
+
+    private void paneles() {
         try {
-            fondo = ImageIO.read(new File("src\\blackjack-table.jpg"));
+            fondo = ImageIO.read(new File("src/blackjack-table.jpg"));
         } catch (IOException e) {
             System.err.println("Error al cargar la imagen de fondo: " + e);
             fondo = null;
@@ -56,7 +166,7 @@ public class Ventana extends JFrame {
         panel.setLayout(null);
     }
 
-    private void cartasVolteadas(){
+    private void cartasVolteadas() {
         JLabel cartaMonton1 = new JLabel();
         JLabel cartaMonton2 = new JLabel();
         JLabel cartaMonton3 = new JLabel();
@@ -80,14 +190,14 @@ public class Ventana extends JFrame {
 
     }
 
-    private void fichas(){
+    private void fichas() {
         JButton ficha100 = new JButton();
         JButton ficha50 = new JButton();
         JButton ficha10 = new JButton();
 
-        ficha100.setBounds(30,300,75,75);
-        ficha50.setBounds(30,375,75,75);
-        ficha10.setBounds(30,450,75,75);
+        ficha100.setBounds(30, 300, 75, 75);
+        ficha50.setBounds(30, 375, 75, 75);
+        ficha10.setBounds(30, 450, 75, 75);
 
         ficha100.setOpaque(false);
         ficha100.setContentAreaFilled(false);
@@ -105,19 +215,22 @@ public class Ventana extends JFrame {
         ImageIcon icon50 = new ImageIcon(getClass().getResource("/50.png"));
         ImageIcon icon10 = new ImageIcon(getClass().getResource("/10.png"));
 
-        ficha100.setIcon(new ImageIcon(icon100.getImage().getScaledInstance(ficha100.getWidth(),ficha100.getHeight(),Image.SCALE_SMOOTH)));
-        ficha50.setIcon(new ImageIcon(icon50.getImage().getScaledInstance(ficha50.getWidth(),ficha50.getHeight(),Image.SCALE_SMOOTH)));
-        ficha10.setIcon(new ImageIcon(icon10.getImage().getScaledInstance(ficha10.getWidth(),ficha10.getHeight(),Image.SCALE_SMOOTH)));
+        ficha100.setIcon(new ImageIcon(
+                icon100.getImage().getScaledInstance(ficha100.getWidth(), ficha100.getHeight(), Image.SCALE_SMOOTH)));
+        ficha50.setIcon(new ImageIcon(
+                icon50.getImage().getScaledInstance(ficha50.getWidth(), ficha50.getHeight(), Image.SCALE_SMOOTH)));
+        ficha10.setIcon(new ImageIcon(
+                icon10.getImage().getScaledInstance(ficha10.getWidth(), ficha10.getHeight(), Image.SCALE_SMOOTH)));
 
         panel.add(ficha100);
         panel.add(ficha50);
         panel.add(ficha10);
     }
 
-    private void textos(){
+    private void textos() {
         JLabel apuestaTexto = new JLabel("Apuesta: $");
         JLabel dineroTexto = new JLabel("Dinero: $");
-        Font fuentePersonalizada = new Font("Times New Roman",Font.BOLD, 30);
+        Font fuentePersonalizada = new Font("Times New Roman", Font.BOLD, 30);
         Color fondo = new Color(67, 130, 255, 190);
 
         apuestaTexto.setBounds(20, 230, 200, 50);
@@ -132,9 +245,8 @@ public class Ventana extends JFrame {
         dineroTexto.setBackground(fondo);
         dineroTexto.setOpaque(true);
 
-
         panel.add(apuestaTexto);
         panel.add(dineroTexto);
     }
-    
+
 }
