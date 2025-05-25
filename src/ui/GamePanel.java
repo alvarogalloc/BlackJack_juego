@@ -2,9 +2,6 @@ package ui;
 
 import game.BlackjackGame;
 import game.Card;
-import game.HumanPlayer;
-import game.Dealer;
-import game.Deck;
 import ui.components.ChipButton;
 import utils.ImageLoader;
 
@@ -192,9 +189,6 @@ public class GamePanel extends JPanel {
         ficha50.setEnabled(showInitialButtons);
         ficha100.setEnabled(showInitialButtons);
 
-        boolean showGameButtons = (state == BlackjackGame.GameState.PLAYER_TURN
-                || state == BlackjackGame.GameState.DEALER_TURN);
-
         doblarButton.setVisible(false);
         plantarseButton.setVisible(false);
         pedirCartaButton.setVisible(false);
@@ -271,7 +265,9 @@ public class GamePanel extends JPanel {
         try {
             game.doubleDownPlayer();
             drawPlayerCards();
-            if (game.getPlayer().calculateHandValue() <= 21) {
+            if (game.getPlayer().calculateHandValue() > 21) {
+                displayGameResult();
+            } else {
                 new Thread(this::runDealerTurn).start();
             }
             updateUIForGameState();
@@ -415,7 +411,7 @@ public class GamePanel extends JPanel {
     }
 
     private void displayGameResult() {
-        String message = "";
+        String message;
         int playerValue = game.getPlayer().calculateHandValue();
         int dealerValue = game.getDealer().calculateHandValue();
 
@@ -423,23 +419,23 @@ public class GamePanel extends JPanel {
         boolean dealerBlackjack = (game.getDealer().getHand().size() == 2 && dealerValue == 21);
 
         if (playerValue > 21) {
-            message = "¡Te pasaste de 21! Has perdido.";
+            message = "¡Te pasaste de 21! Has perdido.\nPerdida: $" + game.getPlayer().getCurrentBet();
         } else if (dealerValue > 21) {
-            message = "¡La casa se pasó de 21! ¡Ganaste!";
+            message = "¡La casa se pasó de 21! ¡Ganaste!\nGanancia: $" + game.getPlayer().getCurrentBet()*2;
         } else if (playerValue > dealerValue) {
-            message = "¡Ganaste! Tu puntaje es mayor.";
+            message = "¡Ganaste! Tu puntaje es mayor.\nGanancia: $" + game.getPlayer().getCurrentBet()*2;
         } else if (dealerValue > playerValue) {
-            message = "La casa gana. Has perdido.";
+            message = "La casa gana. Has perdido.\nPerdida: $" + game.getPlayer().getCurrentBet();
         } else {
-            message = "¡Empate!";
+            message = "¡Empate! se te devuelve tu apuesta.\nApuesta: $" + game.getPlayer().getCurrentBet();
         }
 
         if (playerBlackjack && dealerBlackjack) {
-            message = "¡Empate! Ambos tienen Blackjack.";
+            message = "¡Empate! Ambos tienen Blackjack. Se te devuelve tu apuesta.\nApuesta: $" + game.getPlayer().getCurrentBet();
         } else if (playerBlackjack) {
-            message = "¡Ganaste con Blackjack!";
+            message = "¡Ganaste con Blackjack! ganaste el doble de tu apuesta.\nGanancia: $" + game.getPlayer().getCurrentBet() * 2.5;
         } else if (dealerBlackjack) {
-            message = "La casa tiene Blackjack. Has perdido.";
+            message = "La casa tiene Blackjack. Has perdido.\nPerdida: $" + game.getPlayer().getCurrentBet();
         }
 
         int opcion = JOptionPane.showOptionDialog(

@@ -6,15 +6,9 @@ import java.util.List;
 
 public abstract class Player {
     protected List<Card> hand;
-    protected String name;
 
-    public Player(String name) {
-        this.name = name;
+    public Player() {
         this.hand = new ArrayList<>();
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void addCard(Card card) {

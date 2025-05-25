@@ -94,7 +94,6 @@ public class Deck {
 
             resetUsedCards();
             initializeDeck();
-            System.out.println("Deck reshuffled.");
         }
         Card card = cards.remove(0);
         usedCards.add(card);

@@ -5,8 +5,7 @@ public class HumanPlayer extends Player {
     private int money;
     private int currentBet;
 
-    public HumanPlayer(String name, int initialMoney) {
-        super(name);
+    public HumanPlayer(int initialMoney) {
         this.money = initialMoney;
         this.currentBet = 0;
     }
@@ -25,7 +24,7 @@ public class HumanPlayer extends Player {
 
     public void placeBet(int amount) throws IllegalArgumentException {
         if (!canAfford(amount)) {
-            throw new IllegalArgumentException("Not enough money to place this bet.");
+            throw new IllegalArgumentException("Dinero insuficiente para realizar la apuesta.");
         }
         this.money -= amount;
         this.currentBet += amount;

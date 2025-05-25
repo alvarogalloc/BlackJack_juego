@@ -18,7 +18,7 @@ public class BlackjackGame {
     private GameState currentState;
 
     public BlackjackGame(int initialPlayerMoney) {
-        this.player = new HumanPlayer("Player 1", initialPlayerMoney);
+        this.player = new HumanPlayer(initialPlayerMoney);
         this.dealer = new Dealer();
         this.deck = new Deck();
         this.currentState = GameState.AWAITING_BET;
@@ -37,9 +37,6 @@ public class BlackjackGame {
     }
 
     public void startGameRound() {
-        if (player.getCurrentBet() == 0) {
-            throw new IllegalStateException("Player must place a bet before starting.");
-        }
         deck.resetUsedCards();
         player.clearHand();
         dealer.clearHand();
@@ -56,55 +53,41 @@ public class BlackjackGame {
         boolean dealerBlackjack = (dealer.getHand().size() == 2 && dealerValue == 21);
 
         if (playerBlackjack && dealerBlackjack) {
-            resolvePush("Both have Blackjack!");
+            resolvePush();
         } else if (playerBlackjack) {
-            resolvePlayerWin("Player wins with Blackjack!", true);
+            resolvePlayerWin(true);
         } else if (dealerBlackjack) {
-            resolveDealerWin("Dealer has Blackjack!");
+            resolveDealerWin();
         } else {
             currentState = GameState.PLAYER_TURN;
         }
     }
 
     public Card hitPlayer() {
-        if (currentState != GameState.PLAYER_TURN) {
-            throw new IllegalStateException("It's not the player's turn to hit.");
-        }
         Card newCard = deck.dealCard();
         player.addCard(newCard);
         if (player.calculateHandValue() > 21) {
-            resolveDealerWin("Player busted!");
+            resolveDealerWin();
         }
         return newCard;
     }
 
     public void standPlayer() {
-        if (currentState != GameState.PLAYER_TURN) {
-            throw new IllegalStateException("It's not the player's turn to stand.");
-        }
         currentState = GameState.DEALER_TURN;
-
     }
 
     public void doubleDownPlayer() {
-        if (currentState != GameState.PLAYER_TURN || player.getHand().size() != 2
-                || !player.canAfford(player.getCurrentBet())) {
-            throw new IllegalStateException("Cannot double down at this time.");
-        }
         player.placeBet(player.getCurrentBet());
         Card newCard = deck.dealCard();
         player.addCard(newCard);
         if (player.calculateHandValue() > 21) {
-            resolveDealerWin("Player busted on double down!");
+            resolveDealerWin();
         } else {
             currentState = GameState.DEALER_TURN;
         }
     }
 
     public List<Card> dealerPlay() {
-        if (currentState != GameState.DEALER_TURN) {
-            throw new IllegalStateException("It's not the dealer's turn.");
-        }
         List<Card> newCards = new ArrayList<>();
         while (dealer.wantsToHit(player.calculateHandValue())) {
             Card newCard = deck.dealCard();
@@ -125,19 +108,19 @@ public class BlackjackGame {
         int dealerValue = dealer.calculateHandValue();
 
         if (playerValue > 21) {
-            resolveDealerWin("Player busted! Dealer wins.");
+            resolveDealerWin();
         } else if (dealerValue > 21) {
-            resolvePlayerWin("Dealer busted! Player wins.", false);
+            resolvePlayerWin( false);
         } else if (playerValue > dealerValue) {
-            resolvePlayerWin("Player has a higher score! Player wins.", false);
+            resolvePlayerWin( false);
         } else if (dealerValue > playerValue) {
-            resolveDealerWin("Dealer has a higher score! Dealer wins.");
+            resolveDealerWin();
         } else {
-            resolvePush("It's a push!");
+            resolvePush();
         }
     }
 
-    private void resolvePlayerWin(String message, boolean isBlackjack) {
+    private void resolvePlayerWin(boolean isBlackjack) {
         int winnings = player.getCurrentBet();
         if (isBlackjack) {
             winnings = (int) (winnings * 2.5);
@@ -146,22 +129,15 @@ public class BlackjackGame {
         }
         player.addMoney(winnings);
         currentState = GameState.GAME_OVER_ROUND;
-        System.out.println(message + " Player wins $" + winnings + ". New money: $" + player.getMoney());
-
     }
 
-    private void resolveDealerWin(String message) {
-
+    private void resolveDealerWin() {
         currentState = GameState.GAME_OVER_ROUND;
-        System.out.println(message + " Player loses $" + player.getCurrentBet() + ". New money: $" + player.getMoney());
-
     }
 
-    private void resolvePush(String message) {
+    private void resolvePush() {
         player.addMoney(player.getCurrentBet());
         currentState = GameState.GAME_OVER_ROUND;
-        System.out.println(message + " Player gets bet back. New money: $" + player.getMoney());
-
     }
 
     public void resetForNewRound() {
