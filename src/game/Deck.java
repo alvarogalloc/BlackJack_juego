@@ -1,13 +1,16 @@
+
+package game;
+
 import java.util.*;
 
 public class Deck {
     private static final Map<String, Integer> cardValues;
-    private final List<String> usedCards;
+    private final List<Card> cards;
+    private final List<Card> usedCards;
 
     static {
-        cardValues = new HashMap<String, Integer>();
+        cardValues = new HashMap<>();
 
-        // Asignar valores a las cartas numéricas
         cardValues.put("2C.png", 2);
         cardValues.put("2D.png", 2);
         cardValues.put("2H.png", 2);
@@ -45,7 +48,6 @@ public class Deck {
         cardValues.put("10H.png", 10);
         cardValues.put("10S.png", 10);
 
-        // Asignar valores a las cartas de figuras
         cardValues.put("JC.png", 10);
         cardValues.put("JD.png", 10);
         cardValues.put("JH.png", 10);
@@ -59,13 +61,10 @@ public class Deck {
         cardValues.put("QH.png", 10);
         cardValues.put("QS.png", 10);
 
-        // Asignar valor al As (puede ser 1 o 11, dependiendo del contexto del juego)
         cardValues.put("AC.png", 11);
         cardValues.put("AD.png", 11);
         cardValues.put("AH.png", 11);
         cardValues.put("AS.png", 11);
-
-        // (AH, AS, QS) -> 11 + 11 + 10
     }
 
     public static int getValue(String cardName) {
@@ -78,23 +77,33 @@ public class Deck {
     }
 
     public Deck() {
+        cards = new ArrayList<>();
         usedCards = new ArrayList<>();
+        initializeDeck();
     }
 
-    public String getRandomCard() {
-        List<String> keys = new ArrayList<>(cardValues.keySet());
+    private void initializeDeck() {
+        for (Map.Entry<String, Integer> entry : cardValues.entrySet()) {
+            cards.add(new Card(entry.getKey(), entry.getValue()));
+        }
+        Collections.shuffle(cards);
+    }
 
-        Random random = new Random();
-        int randomIndex = random.nextInt(keys.size());
+    public Card dealCard() {
+        if (cards.isEmpty()) {
 
-        String randomCard = keys.get(randomIndex);
-        usedCards.add(randomCard);
-
-        return randomCard;
+            resetUsedCards();
+            initializeDeck();
+            System.out.println("Deck reshuffled.");
+        }
+        Card card = cards.remove(0);
+        usedCards.add(card);
+        return card;
     }
 
     public void resetUsedCards() {
         usedCards.clear();
+        cards.clear();
+        initializeDeck();
     }
-
 }

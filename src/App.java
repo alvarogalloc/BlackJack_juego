@@ -1,6 +1,9 @@
+
+import ui.GameWindow;
+
 public class App {
     public static void main(String[] args) throws Exception {
-        Ventana v1 = new Ventana();
-        v1.setVisible(true);
+        GameWindow gameWindow = new GameWindow();
+        gameWindow.setVisible(true);
     }
 }
