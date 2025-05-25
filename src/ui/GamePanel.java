@@ -95,15 +95,15 @@ public class GamePanel extends JPanel {
 
         allInButton.setFont(buttonFont);
         allInButton.setBackground(new Color(255, 140, 0)); 
-        allInButton.setForeground(Color.WHITE);
+        allInButton.setForeground(Color.BLACK);
 
         empezarButton.setFont(buttonFont);
         empezarButton.setBackground(new Color(0, 120, 215));
-        empezarButton.setForeground(Color.WHITE);
+        empezarButton.setForeground(Color.BLACK);
 
         salirButton.setFont(buttonFont);
         salirButton.setBackground(new Color(220, 53, 69));
-        salirButton.setForeground(Color.WHITE);
+        salirButton.setForeground(Color.BLACK);
 
         allInButton.setBounds(440, 500, 100, 40);
         empezarButton.setBounds(590, 500, 150, 40);
@@ -127,15 +127,15 @@ public class GamePanel extends JPanel {
 
         doblarButton.setFont(buttonFont);
         doblarButton.setBackground(new Color(255, 140, 0)); 
-        doblarButton.setForeground(Color.WHITE);
+        doblarButton.setForeground(Color.BLACK);
 
         plantarseButton.setFont(buttonFont);
         plantarseButton.setBackground(new Color(220, 53, 69));
-        plantarseButton.setForeground(Color.WHITE);
+        plantarseButton.setForeground(Color.BLACK);
 
         pedirCartaButton.setFont(buttonFont);
         pedirCartaButton.setBackground(new Color(0, 120, 215));
-        pedirCartaButton.setForeground(Color.WHITE);
+        pedirCartaButton.setForeground(Color.BLACK);
 
         doblarButton.addActionListener(e -> handleDoblar());
         plantarseButton.addActionListener(e -> handlePlantarse());
